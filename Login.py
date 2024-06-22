@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-
-
 import sqlite3
 
 # Function to handle user registration
@@ -37,15 +35,15 @@ def open_registration():
     reg_window.title("Sign Up")
     reg_window.geometry("300x200")  # Set resolution for the registration window
 
-    tk.Label(reg_window, text="Username").pack(anchor='w', padx=10)
+    tk.Label(reg_window, text="Username").grid(row=0, column=0, padx=10, pady=5, sticky='w')
     reg_entry_username = tk.Entry(reg_window)
-    reg_entry_username.pack(anchor='w', padx=10)
+    reg_entry_username.grid(row=0, column=1, padx=10, pady=5)
 
-    tk.Label(reg_window, text="Password").pack(anchor='w', padx=10)
+    tk.Label(reg_window, text="Password").grid(row=1, column=0, padx=10, pady=5, sticky='w')
     reg_entry_password = tk.Entry(reg_window, show="*")
-    reg_entry_password.pack(anchor='w', padx=10)
+    reg_entry_password.grid(row=1, column=1, padx=10, pady=5)
 
-    tk.Button(reg_window, text="Register", command=register_user).pack(anchor='w', padx=10)
+    tk.Button(reg_window, text="Register", command=register_user).grid(row=2, column=0, columnspan=2, pady=10)
 
 # Function to handle login button click
 def login():
@@ -82,8 +80,6 @@ def create_gradient(canvas, width, height, color1, color2):
 root = tk.Tk()
 root.title("Login Page")
 
-
-
 # Left frame for gradient background
 left_frame = tk.Frame(root, width=900, height=root.winfo_screenheight())
 left_frame.pack(side='left', fill='y')
@@ -107,7 +103,6 @@ style.map('TButton', background=[('active', '#0041b3')])
 style.configure('Black.TButton', padding=10, font=('Arial', 14), background='#0052cc', foreground='black')
 style.map('Black.TButton', background=[('active', '#0041b3')])
 
-
 # Title and Logo
 logo = tk.Label(right_frame, text="NOAKAY STATE UNIVERSITY", bg='#000000', fg='white', font=('Arial', 18))
 logo.pack(pady=(50, 10))
@@ -119,33 +114,26 @@ app_title.pack(pady=(10, 30))
 container = tk.Frame(right_frame, bg='#000000')
 container.pack(anchor='center', padx=10, pady=10)
 
-# Style configuration for ttk widgets
-style = ttk.Style()
-style.configure('TEntry', padding=10, relief="flat", font=('Arial', 14), foreground='gray')
-style.configure('TButton', padding=10, font=('Arial', 14,'gray'), background='#0052cc', foreground='white')
-style.map('TButton', background=[('active', '#0041b3')])
 
 # Form fields
+tk.Label(container, text="Username:", bg='#000000', fg='white', font=('Arial', 14)).grid(row=0, column=0, padx=20, pady=10, sticky='w')
+entry_username = ttk.Entry(container, style='TEntry',width=30)
+entry_username.grid(row=0, column=1, padx=20, pady=10)
 
-entry_username = ttk.Entry(container, style='TEntry')
-entry_username.pack(fill='x', padx=20, pady=10)
-entry_username.insert(0, "Email address")
+tk.Label(container, text="Password:", bg='#000000', fg='white', font=('Arial', 14)).grid(row=1, column=0, padx=20, pady=10, sticky='w')
+entry_password = ttk.Entry(container, show="*", style='TEntry', width=30)
+entry_password.grid(row=1, column=1, padx=20, pady=10)
 
-entry_password = ttk.Entry(container, show="*", style='TEntry')
-entry_password.pack(fill='x', padx=20, pady=10)
-entry_password.insert(0, "Password")
-
-# Additional entry for Digitak Code
-entry_code = ttk.Entry(container, style='TEntry')
-entry_code.pack(fill='x', padx=20, pady=10)
-entry_code.insert(0, "Digitak Code")
+tk.Label(container, text="Digital Code", bg='#000000', fg='white', font=('Arial', 14)).grid(row=2, column=0, padx=20, pady=10, sticky='w')
+entry_code = ttk.Entry(container, style='TEntry',width=30)
+entry_code.grid(row=2, column=1, padx=20, pady=10)
 
 # Login button
 login_button = ttk.Button(container, text="Log In", style='Black.TButton', command=login)
-login_button.pack(fill='x', padx=20, pady=20)
+login_button.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
 
 # Sign Up button
 signup_button = ttk.Button(container, text="Sign Up", style='Black.TButton', command=open_registration)
-signup_button.pack(fill='x', padx=20, pady=10)
+signup_button.grid(row=4, column=0, columnspan=2, padx=20, pady=10)
 
 root.mainloop()
