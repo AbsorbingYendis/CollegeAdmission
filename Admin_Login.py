@@ -54,10 +54,10 @@ label_title.pack(pady=(20, 20))
 email_frame = tk.Frame(frame, bg="#e0f7fa")
 email_frame.pack(pady=(45,20))
 
-label_email = tk.Label(email_frame, text="Email or Username:", font=("Arial", 12), bg="#e0f7fa",)
+label_email = tk.Label(email_frame, text="Email or Username:", font=("Arial", 12), bg="#e0f7fa")
 label_email.pack(side="left",pady=(5, 5))
 
-entry_email = tk.Entry(email_frame, font=("Arial", 12), width=30)
+entry_email = tk.Entry(email_frame, font=("Arial", 12), width=40)
 entry_email.pack(side="right",padx=(5,5))
 
 # Frame for pass entry & label
@@ -67,7 +67,7 @@ pass_frame.pack(pady=1)
 label_password = tk.Label(pass_frame, text="Password:", font=("Arial", 12), bg="#e0f7fa")
 label_password.pack(side="left",pady=(5, 5),padx=(60,1))
 
-entry_password = tk.Entry(pass_frame, show='*', font=("Arial", 12), width=30)
+entry_password = tk.Entry(pass_frame, show='*', font=("Arial", 12), width=40)
 entry_password.pack(side="right",padx=(5,1))
 
 # Verification code section
@@ -86,10 +86,8 @@ button_frame = tk.Frame(frame, bg="#e0f7fa")
 button_frame.pack(pady=(45,20))
 
 btn_login = tk.Button(button_frame, text="Login", font=("Arial", 12), bg="#1976d2", fg="white", width=20, height=2, command=login_action)
-btn_login.pack(side=tk.LEFT, padx=(50, 50))
+btn_login.pack( padx=(50, 50))
 
-btn_register = tk.Button(button_frame, text="Register", font=("Arial", 12), bg="#d32f2f", fg="white", width=20, height=2, command=register_action)
-btn_register.pack(side=tk.RIGHT, padx=(10, 50))
 
 label_forgot_password = tk.Label(frame, text="Forgot password?", font=("Arial", 10), fg="#1e88e5", bg="#e0f7fa", cursor="hand2")
 label_forgot_password.pack(pady=(15, 10))
