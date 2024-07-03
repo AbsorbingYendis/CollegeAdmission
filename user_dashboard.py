@@ -366,12 +366,18 @@ def application_form():
 window = tb.Window(themename="flatly")
 
 # Global
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
+# screen_width = window.winfo_screenwidth()
+# screen_height = window.winfo_screenheight()
+
+screen_width = 1920
+screen_height = 1080
 window_width = int(screen_width/1.5)
 window_height = int (screen_height/1.5)
-x = (screen_width/2) - (window_width/2)
-y = (screen_height/2) - (window_height/2)
+# x = (screen_width/2) - (window_width/2)
+# y = (screen_height/2) - (window_height/2)
+
+x = (1280/2) - (1280/2)
+y = (720/2) - (720/2)
 
 # Window properties
 window.title("User Dashboard")
@@ -446,6 +452,8 @@ content_frame = tb.Frame(main_frame, bootstyle="default")
 content_frame.pack(side=LEFT)
 content_frame.pack_propagate(False) # Without this, we can't change the frame's size
 content_frame.configure(width=window_width, height=window_height)
+scrollbar = tb.Scrollbar(content_frame, orient="vertical", bootstyle=DEFAULT)
+scrollbar.pack(side=RIGHT, fill="y")
 
 label = tk.Label(content_frame, text="Main frame")
 label.pack()
