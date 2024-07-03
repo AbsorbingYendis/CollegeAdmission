@@ -134,8 +134,6 @@ def application_form():
   app_form_notebook = tb.Notebook(content_frame, bootstyle="primary")
   app_form_notebook.pack(fill=BOTH, expand=1,padx=10,pady=(0,50))
 
-  submit_button = tb.Button(content_frame, text="Submit", bootstyle="danger", command=submit_form)
-  submit_button.pack(pady=(0,80))
 
 
   # Personal info tab
@@ -332,6 +330,9 @@ def application_form():
   school_type_entry = tb.Entry(school_grad_frame, bootstyle="default", font=("Arial", 12))
   school_type_entry.grid(row=1, column=3, padx=5, pady=5, sticky='ew')
   
+
+  # GRADES TAB
+
   grades_frame = tb.Frame(content_frame, bootstyle="light")
   grades_frame.pack(fill="both", expand=True)
   grades_frame.grid_columnconfigure(1, weight=1)
@@ -354,7 +355,9 @@ def application_form():
   secondsem_entry = tb.Entry(grades_frame, bootstyle="default", font=("Arial", 12))
   secondsem_entry.grid(row=2, column=3, padx=5, pady=5, sticky='ew')
 
-
+  # Row 4
+  submit_button1 = tb.Button(grades_frame, text="Submit", bootstyle="danger", command=submit_form)
+  submit_button1.grid(row=3, columnspan=4, sticky="ew", padx=300, pady=100)
 
 
   app_form_notebook.add(personal_info_frame, text="Personal Information")
@@ -366,18 +369,12 @@ def application_form():
 window = tb.Window(themename="flatly")
 
 # Global
-# screen_width = window.winfo_screenwidth()
-# screen_height = window.winfo_screenheight()
-
-screen_width = 1920
-screen_height = 1080
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
 window_width = int(screen_width/1.5)
 window_height = int (screen_height/1.5)
-# x = (screen_width/2) - (window_width/2)
-# y = (screen_height/2) - (window_height/2)
-
-x = (1280/2) - (1280/2)
-y = (720/2) - (720/2)
+x = (screen_width/2) - (window_width/2)
+y = (screen_height/2) - (window_height/2)
 
 # Window properties
 window.title("User Dashboard")
@@ -452,8 +449,6 @@ content_frame = tb.Frame(main_frame, bootstyle="default")
 content_frame.pack(side=LEFT)
 content_frame.pack_propagate(False) # Without this, we can't change the frame's size
 content_frame.configure(width=window_width, height=window_height)
-scrollbar = tb.Scrollbar(content_frame, orient="vertical", bootstyle=DEFAULT)
-scrollbar.pack(side=RIGHT, fill="y")
 
 label = tk.Label(content_frame, text="Main frame")
 label.pack()
