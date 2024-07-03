@@ -54,27 +54,30 @@ canvas.bind("<Configure>", lambda event: create_gradient(canvas, "#090979", "#4c
 
 # Create a frame for the form elements
 form_frame = tk.Frame(canvas, bg="#4c4cb0")
-form_frame.place(relwidth=1, relheight=1)
+form_frame.place(relx=0.5, rely=0.5, anchor='center')  # Centering the form frame
 
 # Add the "Admission Fees" label in the upper left corner
 header_label = tk.Label(form_frame, text="Admission Fees", bg="#4c4cb0", fg="white", font=('Helvetica', 18, 'bold'))
-header_label.place(x=20, y=20)
+header_label.pack(pady=(20, 10))  # Add some padding
 
 # Style configuration
 style = ttk.Style()
-style.configure('TLabel', background='#4c4cb0', foreground='white', font=('Helvetica', 14))
-style.configure('TButton', font=('Helvetica', 14), padding=10)
-style.configure('TEntry', font=('Helvetica', 14), padding=5)
+style.configure('TLabel', background='#4c4cb0', foreground='white', font=('Helvetica', 12))
+style.configure('TButton', font=('Helvetica', 12), padding=10)
+style.configure('TEntry', font=('Helvetica', 12), padding=5)
 
-# Add form details inside the form frame
-ttk.Label(form_frame, text="Payment Amount").place(x=50, y=100)
-entry_payment_amount = ttk.Entry(form_frame, width=30)
-entry_payment_amount.place(x=250, y=100)
+# Use a grid to layout the form elements
+form_inner_frame = tk.Frame(form_frame, bg="#4c4cb0")
+form_inner_frame.pack(padx=20, pady=20)
 
-ttk.Label(form_frame, text="Mode of Payment").place(x=50, y=160)
+ttk.Label(form_inner_frame, text="Payment Amount").grid(row=0, column=0, pady=10, sticky='e')
+entry_payment_amount = ttk.Entry(form_inner_frame, width=30)
+entry_payment_amount.grid(row=0, column=1, pady=20)
+
+ttk.Label(form_inner_frame, text="Mode of Payment").grid(row=1, column=0, pady=10, sticky='e')
 mode_var = tk.StringVar()
-mode_button = ttk.Button(form_frame, text="Choose Mode of Payment", command=choose_mode_of_payment, width=30)  # Adjusted width
-mode_button.place(x=250, y=160)
+mode_button = ttk.Button(form_inner_frame, text="Choose Mode of Payment", command=choose_mode_of_payment, width=20)
+mode_button.grid(row=1, column=1, pady=10,padx=(10,1))
 
 # Mode of Payment Menu
 mode_of_payment_menu = tk.Menu(root, tearoff=0)
@@ -83,21 +86,21 @@ mode_of_payment_menu.add_radiobutton(label="Debit Card", variable=mode_var, valu
 mode_of_payment_menu.add_radiobutton(label="E-Wallet", variable=mode_var, value="E-Wallet")
 mode_of_payment_menu.add_radiobutton(label="UPI", variable=mode_var, value="UPI")
 
-ttk.Label(form_frame, text="Transaction Number").place(x=50, y=220)
-entry_transaction_number = ttk.Entry(form_frame, width=30)
-entry_transaction_number.place(x=250, y=220)
+ttk.Label(form_inner_frame, text="Transaction Number").grid(row=2, column=0, pady=10, sticky='e')
+entry_transaction_number = ttk.Entry(form_inner_frame, width=30)
+entry_transaction_number.grid(row=2, column=1, pady=20,padx=5)
 
 # Submit button
-submit_button = ttk.Button(form_frame, text="Submit", command=submit_payment)
-submit_button.place(x=250, y=280)
+submit_button = ttk.Button(form_inner_frame, text="Submit", command=submit_payment)
+submit_button.grid(row=3, column=1, pady=20)
 
 # Styling for the submit button
 submit_button.configure(style='Submit.TButton')
 style.configure('Submit.TButton', background='#007bff', foreground='white', font=('Helvetica', 14, 'bold'))
 
 # Create a profile container in the upper right corner
-profile_button = ttk.Button(form_frame, text="Profile", style='TButton', command=lambda: profile_menu.post(profile_button.winfo_rootx(), profile_button.winfo_rooty() + profile_button.winfo_height()))
-profile_button.place(relx=1, rely=0, anchor='ne')
+profile_button = ttk.Button(root, text="Profile", style='TButton', command=lambda: profile_menu.post(profile_button.winfo_rootx(), profile_button.winfo_rooty() + profile_button.winfo_height()))
+profile_button.place(relx=1, rely=0, anchor='ne', y=20)
 
 profile_menu = tk.Menu(form_frame, tearoff=0)
 profile_menu.add_command(label="Edit Profile")
