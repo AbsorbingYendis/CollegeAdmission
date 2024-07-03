@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import string
+import subprocess
 import sqlite3
 # Global variables for verification code and registered email
 verification_code = None
@@ -15,7 +16,7 @@ def login_action():
     entered_code = entry_verification_code.get()
 
     # Connect to the database
-    conn = sqlite3.connect('AdminAcc.db')
+    conn = sqlite3.connect('../DATABASES/AdminAcc.db')
     cursor = conn.cursor()
 
     # Query the database for the entered email and password
@@ -28,7 +29,7 @@ def login_action():
     # Check if a matching user was found
     if user:
         if entered_code == verification_code:
-            messagebox.showinfo("Login Successful", f"Welcome, {entered_email}!")
+            subprocess.Popen(["python", "user_dashboard.py"])
         else:
             messagebox.showerror("Login Failed", "Invalid verification code.")
     else:
