@@ -50,39 +50,31 @@ canvas = tk.Canvas(root, width=900, height=700)
 canvas.pack(fill=tk.BOTH, expand=True)
 
 # Draw the gradient background
-canvas.bind("<Configure>", lambda event: create_gradient(canvas, "#b04c4c", "#b04c4c"))
+canvas.bind("<Configure>", lambda event: create_gradient(canvas, "#090979", "#4c4cb0"))
 
 # Create a frame for the form elements
-form_frame = tk.Frame(canvas, bg="#b04c4c")
-form_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+form_frame = tk.Frame(canvas, bg="#4c4cb0")
+form_frame.place(relwidth=1, relheight=1)
 
-# Form title
-header_label = tk.Label(form_frame, text="Admission Fees", bg="#b04c4c", fg="white", font=('Helvetica', 18, 'bold'))
-header_label.grid(row=0, column=0, columnspan=4, pady=10)
-subheader_label = tk.Label(form_frame, text="Please fill in the details", bg="#b04c4c", fg="white", font=('Helvetica', 10))
-subheader_label.grid(row=1, column=0, columnspan=4, pady=5)
+# Add the "Admission Fees" label in the upper left corner
+header_label = tk.Label(form_frame, text="Admission Fees", bg="#4c4cb0", fg="white", font=('Helvetica', 18, 'bold'))
+header_label.place(x=20, y=20)
 
 # Style configuration
 style = ttk.Style()
-style.configure('TLabel', background='#b04c4c', foreground='white', font=('Helvetica', 14))
+style.configure('TLabel', background='#4c4cb0', foreground='white', font=('Helvetica', 14))
 style.configure('TButton', font=('Helvetica', 14), padding=10)
 style.configure('TEntry', font=('Helvetica', 14), padding=5)
 
-# Payment Amount
-ttk.Label(form_frame, text="Payment Amount").grid(row=2, column=0, padx=10, pady=10, sticky='E')
+# Add form details inside the form frame
+ttk.Label(form_frame, text="Payment Amount").place(x=50, y=100)
 entry_payment_amount = ttk.Entry(form_frame, width=30)
-entry_payment_amount.grid(row=2, column=1, padx=10, pady=10, sticky='W')
+entry_payment_amount.place(x=250, y=100)
 
-# Transaction Number
-ttk.Label(form_frame, text="Transaction Number").grid(row=3, column=0, padx=10, pady=10, sticky='E')
-entry_transaction_number = ttk.Entry(form_frame, width=30)
-entry_transaction_number.grid(row=3, column=1, padx=10, pady=10, sticky='W')
-
-# Mode of Payment
-ttk.Label(form_frame, text="Mode of Payment").grid(row=4, column=0, padx=10, pady=10, sticky='E')
+ttk.Label(form_frame, text="Mode of Payment").place(x=50, y=160)
 mode_var = tk.StringVar()
-mode_button = ttk.Button(form_frame, text="Choose Mode of Payment", command=choose_mode_of_payment, width=30)
-mode_button.grid(row=4, column=1, padx=10, pady=10, sticky='W')
+mode_button = ttk.Button(form_frame, text="Choose Mode of Payment", command=choose_mode_of_payment, width=30)  # Adjusted width
+mode_button.place(x=250, y=160)
 
 # Mode of Payment Menu
 mode_of_payment_menu = tk.Menu(root, tearoff=0)
@@ -91,9 +83,13 @@ mode_of_payment_menu.add_radiobutton(label="Debit Card", variable=mode_var, valu
 mode_of_payment_menu.add_radiobutton(label="E-Wallet", variable=mode_var, value="E-Wallet")
 mode_of_payment_menu.add_radiobutton(label="UPI", variable=mode_var, value="UPI")
 
+ttk.Label(form_frame, text="Transaction Number").place(x=50, y=220)
+entry_transaction_number = ttk.Entry(form_frame, width=30)
+entry_transaction_number.place(x=250, y=220)
+
 # Submit button
 submit_button = ttk.Button(form_frame, text="Submit", command=submit_payment)
-submit_button.grid(row=5, column=1, pady=20, padx=10, sticky='W')
+submit_button.place(x=250, y=280)
 
 # Styling for the submit button
 submit_button.configure(style='Submit.TButton')
@@ -101,33 +97,13 @@ style.configure('Submit.TButton', background='#007bff', foreground='white', font
 
 # Create a profile container in the upper right corner
 profile_button = ttk.Button(form_frame, text="Profile", style='TButton', command=lambda: profile_menu.post(profile_button.winfo_rootx(), profile_button.winfo_rooty() + profile_button.winfo_height()))
-profile_button.grid(row=0, column=3, pady=0, padx=0, sticky='E')
+profile_button.place(relx=1, rely=0, anchor='ne')
 
 profile_menu = tk.Menu(form_frame, tearoff=0)
 profile_menu.add_command(label="Edit Profile")
 profile_menu.add_command(label="Change Password", command=change_password)
 profile_menu.add_separator()
 profile_menu.add_command(label="Logout", command=logout)
-
-# Forgot Password and Back Home links
-forgot_password_label = ttk.Label(form_frame, text="Forgot Password?", foreground="blue", background='#b04c4c', cursor="hand2")
-forgot_password_label.grid(row=6, column=0, columnspan=4, pady=5)
-forgot_password_label.bind("<Button-1>", lambda e: forgot_password())
-
-back_home_label = ttk.Label(form_frame, text="Back Home", foreground="blue", background='#b04c4c', cursor="hand2")
-back_home_label.grid(row=7, column=0, columnspan=4, pady=5)
-back_home_label.bind("<Button-1>", lambda e: back_home())
-
-# Function to handle forgot password
-def forgot_password():
-    email = entry_email.get()
-    # Add logic for forgot password (e.g., send reset email)
-    messagebox.showinfo("Forgot Password", f"Password reset link sent to {email}")
-
-# Function to go back home
-def back_home():
-    # Logic for back home (e.g., navigate to home screen)
-    messagebox.showinfo("Back Home", "Navigating to home screen")
 
 # Run the main loop
 root.mainloop()
