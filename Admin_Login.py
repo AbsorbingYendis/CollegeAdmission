@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import string
+import sqlite3
 
 # Global variables for verification code and registered email
 verification_code = None
-registered_email = None
+
 
 # Function for login button
 def login_action():
@@ -14,10 +15,29 @@ def login_action():
     entered_password = entry_password.get()
     entered_code = entry_verification_code.get()
 
-    if entered_email == "qwe" and entered_password == "123" and entered_code == verification_code:
-        messagebox.showinfo("Login Successful", f"Welcome, {entered_email}!")
+    # Connect to the database
+    conn = sqlite3.connect('AdminAcc.db')
+    cursor = conn.cursor()
+
+    # Query the database for the entered email and password
+    cursor.execute('''
+    SELECT * FROM users WHERE email = ? AND password = ?
+    ''', (entered_email, entered_password))
+
+    user = cursor.fetchone()
+
+    # Check if a matching user was found
+    if user:
+        if entered_code == verification_code:
+            messagebox.showinfo("Login Successful", f"Welcome, {entered_email}!")
+        else:
+            messagebox.showerror("Login Failed", "Invalid verification code.")
     else:
-        messagebox.showerror("Login Failed", "Invalid email, password, or verification code.")
+        messagebox.showerror("Login Failed", "Invalid email or password.")
+
+    # Close the connection
+    conn.close()
+
 
 # Function for generating verification code with symbols
 def generate_code():
@@ -78,7 +98,7 @@ entry_verification_code = tk.Entry(frame, font=("Arial", 12), width=10)
 entry_verification_code.pack()
 
 # Buttons and link inside the frame
-btn_generate_code = tk.Button(frame, text="Generate Code", font=("Arial", 12), bg="#4caf50", fg="white", width=15, height=1, command=generate_code)
+btn_generate_code = tk.Button(frame, text="Generate Code", font=("Arial", 12), bg="#4caf50", fg="white", width=15, command=generate_code)
 btn_generate_code.pack(pady=(20, 5))
 
 # Frame for login and register buttons
