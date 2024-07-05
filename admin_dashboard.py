@@ -4,14 +4,10 @@ from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 from admin_dashboard_forms.admission_application import*
 from admin_dashboard_forms.course import*
-from admin_dashboard_forms.enquiry import*
 from admin_dashboard_forms.home import*
-from admin_dashboard_forms.pages import*
 from admin_dashboard_forms.public_notice import*
-from admin_dashboard_forms.registered_users import*
 from admin_dashboard_forms.reports import*
 from admin_dashboard_forms.search_application import*
-from admin_dashboard_forms.subscriber import*
 
 # Functions
 
@@ -98,8 +94,6 @@ home_option.pack(pady=(10,0))
 course_option = tb.Button(left_bar,text="Course",width=20, style="default.TButton", command=lambda: course(content_frame))
 course_option.pack()
 
-reg_users = tb.Button(left_bar,text="Registered Users",width=20, style="default.TButton", command=lambda: registered_users(content_frame))
-reg_users.pack()
 
 application_option = tb.Button(left_bar,text="Admission Application",width=20, style="default.TButton",command=lambda: admission_application(content_frame))
 application_option.pack()
@@ -109,15 +103,6 @@ search_application_option.pack()
 
 public_notice_option = tb.Button(left_bar,text="Public Notice",width=20, style="default.TButton", command=lambda: public_notice(content_frame))
 public_notice_option.pack()
-
-enquiry_option = tb.Button(left_bar,text="Enquiry",width=20, style="default.TButton", command=lambda: enquiry(content_frame))
-enquiry_option.pack()
-
-pages_option = tb.Button(left_bar,text="Pages",width=20, style="default.TButton", command=lambda: pages(content_frame))
-pages_option.pack()
-
-subscriber_option = tb.Button(left_bar,text="Subscriber",width=20, style="default.TButton", command=lambda: subscriber(content_frame))
-subscriber_option.pack()
 
 reports_option = tb.Button(left_bar,text="Reports",width=20, style="default.TButton", command=lambda: reports(content_frame))
 reports_option.pack()
