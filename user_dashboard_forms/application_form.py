@@ -4,14 +4,8 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 import sqlite3
 from tkinter import messagebox
-from user_dashboard_forms.application_form import *
-from user_dashboard_forms.home import *
-from user_dashboard_forms.profile import *
-from user_dashboard_forms.application_form import *
 
-
-# Functions
-def submit_form():
+def submit_form(content_frame):
 
   # Collect data from the form
   first_name = first_name_entry.get()
@@ -123,7 +117,7 @@ def submit_form():
   tk.messagebox.showinfo("Success", "Form submitted successfully!")
   
 
-def application_form():
+def application_form(content_frame):
 
   global first_name_entry, middle_name_entry, surname_entry, suffix_entry, bday_entry, email_entry, sex_var, civilstatus_entry, pob_entry, disability_entry, ethnicity_entry, mt_entry, religion_entry, height_entry, weight_entry, landline_entry, mobileno_entry, country_entry, region_entry, city_entry, barangay_entry, area_entry, cp_name_entry, cp_contact_entry, cp_address_entry, lastschool_entry, school_address_entry, yog_entry, school_type_entry, firstsem_entry, secondsem_entry
 
@@ -361,7 +355,7 @@ def application_form():
   secondsem_entry.grid(row=2, column=3, padx=5, pady=5, sticky='ew')
 
   # Row 4
-  submit_button1 = tb.Button(grades_frame, text="Submit", bootstyle="danger", command=submit_form)
+  submit_button1 = tb.Button(grades_frame, text="Submit", bootstyle="danger", command=lambda: submit_form(content_frame))
   submit_button1.grid(row=3, columnspan=4, sticky="ew", padx=300, pady=100)
 
 
@@ -369,95 +363,3 @@ def application_form():
   app_form_notebook.add(contact_info_frame, text="Contact Information")
   app_form_notebook.add(school_grad_frame, text="Last School Attended")
   app_form_notebook.add(grades_frame, text="Grades")
-
-# Window
-window = tb.Window(themename="flatly")
-
-# Global
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-window_width = int(screen_width/1.5)
-window_height = int (screen_height/1.5)
-x = (screen_width/2) - (window_width/2)
-y = (screen_height/2) - (window_height/2)
-
-# Window properties
-window.title("User Dashboard")
-window.geometry(f"{window_width}x{window_height}+{int(x)}+{int(y)}")
-window.resizable(False, False)
-
-# Main Frame
-main_frame = tb.Frame(window, bootstyle="default")
-main_frame.pack(side=LEFT)
-main_frame.pack_propagate(False) 
-main_frame.config(height=window_height, width=window_width)
-
-# Top Bar
-
-top_bar = tb.Frame(main_frame, bootstyle="info")
-top_bar.pack(side=TOP)
-top_bar.pack_propagate(False)
-top_bar.config(width=window_width, height=50)
-
-# Top Bar items
-nsu_label_frame = tb.Frame(top_bar, bootstyle="info")
-nsu_label_frame.pack(side=LEFT)
-nsu_label_frame.pack_propagate(False)
-nsu_label_frame.config(width=250, height=50)
-
-nsu_label = tb.Label(nsu_label_frame, text="NSU Admission System",bootstyle="inverse-info", font=("Arial",14,"bold"),width=250)
-nsu_label.pack(padx=15,side=LEFT)
-
-sep = tb.Separator(top_bar, orient="vertical")
-sep.pack(fill=tb.Y, side=LEFT)
-
-
-
-profile_frame = tb.Frame(top_bar, bootstyle="info")
-profile_frame.pack(side=RIGHT)
-profile_frame.pack_propagate(False)
-profile_frame.config(width=300, height=50)
-
-
-user_name_label = tb.Label(profile_frame, text="(Applicant Full Name)", bootstyle="inverse-info", font=("Arial",10,"bold"), width=25)
-user_name_label.pack(padx=10, side=LEFT) 
-
-profile_button = tb.Button(profile_frame, text="Profile", bootstyle="warning", command=lambda: profile(content_frame))
-profile_button.pack(side=RIGHT, padx=20)
-
-sep1 = tb.Separator(top_bar, orient="vertical")
-sep1.pack(fill=tb.Y, side=RIGHT)
-
-
-
-# Left Bar
-left_bar = tb.Frame(main_frame, bootstyle="primary") 
-left_bar.pack(side=LEFT)
-left_bar.pack_propagate(False) # Without this, we can't change the frame's size
-left_bar.configure(width=250, height=window_height)
-
-
-# Styles
-style_home_option = tb.Style()
-style_home_option.configure('default.TButton', font=("Arial", 13))
-
-
-# Left bar menu items
-home_option = tb.Button(left_bar,text="Home",width=20, bootstyle="default", style="default.TButton", command=lambda: home(content_frame))
-home_option.pack(pady=(10,0))
-
-application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=application_form)
-application_option.pack()
-
-# Content
-content_frame = tb.Frame(main_frame, bootstyle="default")
-content_frame.pack(side=LEFT)
-content_frame.pack_propagate(False) # Without this, we can't change the frame's size
-content_frame.configure(width=window_width, height=window_height)
-
-label = tk.Label(content_frame, text="Main frame")
-label.pack()
-
-
-
-window.mainloop()
