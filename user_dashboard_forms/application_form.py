@@ -77,7 +77,8 @@ def submit_form(content_frame):
     School_type,
     firstsem_gwa,
     secondsem_gwa,
-    picture_id
+    picture_id,
+    report_card
 ) VALUES (
     ?,
      ?, 
@@ -108,10 +109,11 @@ def submit_form(content_frame):
     ?,
     ?,
     ?,
+    ?.
     ?
     
 );
-    """, (first_name, middle_name, surname, suffix, bday, email, civilstatus, place_of_birth, disability, ethnicity, mother_tongue, religion, height, weight, landline, mobile_no, country, region, city, barangay, area, cp_name, cp_address, lastschool, school_address, year_of_grad, school_type, firstsem_gwa, secondsem_gwa,img_data)
+    """, (first_name, middle_name, surname, suffix, bday, email, civilstatus, place_of_birth, disability, ethnicity, mother_tongue, religion, height, weight, landline, mobile_no, country, region, city, barangay, area, cp_name, cp_address, lastschool, school_address, year_of_grad, school_type, firstsem_gwa, secondsem_gwa,img_data,pdf_data)
                  )
 
   # Store the image and metadata in the SQLite database
@@ -126,10 +128,10 @@ def submit_form(content_frame):
 
 def application_form(content_frame):
 
-  global first_name_entry, middle_name_entry, surname_entry, suffix_entry, bday_entry, email_entry, sex_var, civilstatus_entry, pob_entry, disability_entry, ethnicity_entry, mt_entry, religion_entry, height_entry, weight_entry, landline_entry, mobileno_entry, country_entry, region_entry, city_entry, barangay_entry, area_entry, cp_name_entry, cp_contact_entry, cp_address_entry, lastschool_entry, school_address_entry, yog_entry, school_type_entry, firstsem_entry, secondsem_entry, img_data
+  global first_name_entry, middle_name_entry, surname_entry, suffix_entry, bday_entry, email_entry, sex_var, civilstatus_entry, pob_entry, disability_entry, ethnicity_entry, mt_entry, religion_entry, height_entry, weight_entry, landline_entry, mobileno_entry, country_entry, region_entry, city_entry, barangay_entry, area_entry, cp_name_entry, cp_contact_entry, cp_address_entry, lastschool_entry, school_address_entry, yog_entry, school_type_entry, firstsem_entry, secondsem_entry, img_data, pdf_data
 
   def upload_image():
-    global img_data
+    global img_data, pdf_data
     # Open file dialog to select an image
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png")])
     if not file_path:
@@ -152,6 +154,28 @@ def application_form(content_frame):
       img_data = file.read()
 
     img_label.grid(row=13, column=3, sticky='ew')
+
+  def upload_pdf():
+    global pdf_data
+    file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
+    if file_path:
+      with open(file_path, 'rb') as file:
+        pdf_data = file.read()
+      pdf_label.config(text=file_path.split("/")[-1])
+
+
+
+  def download_pdf():
+    global pdf_data
+    if pdf_data:
+      file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+      if file_path:
+        with open(file_path, 'wb') as file:
+          file.write(pdf_data)
+        messagebox.showinfo("Success", "PDF downloaded successfully!")
+    else:
+      messagebox.showerror("Error", "No PDF uploaded to download.")
+
   # remove all widgets in content_frame
   for widget in content_frame.winfo_children():
         widget.destroy()
@@ -373,8 +397,12 @@ def application_form(content_frame):
 
   # Row 1
   tb.Label(grades_frame, text="Report Card", bootstyle="light-inverse", font=("Arial", 12, "bold")).grid(row=0, column=0, padx=5, pady=5, sticky='w')
-  rc_attach_button = tb.Button(grades_frame, bootstyle="info", text="Attach File")
+  rc_attach_button = tb.Button(grades_frame, bootstyle="info", text="Attach File",command=upload_pdf)
   rc_attach_button.grid(row=0, column=1, padx=5, pady=5, sticky='ew')
+
+
+  rc_download_button = tb.Button(grades_frame, bootstyle="info", text="Download File", command=download_pdf)
+  rc_download_button.grid(row=0, column=2, padx=5, pady=5, sticky='ew')
 
   # Row 2
   tb.Label(grades_frame, text="Grade 11 Grades", bootstyle="light-inverse", font=("Arial", 15, "bold")).grid(row=1, columnspan=4, padx=10)
