@@ -15,16 +15,17 @@ from admin_dashboard_forms.search_application import*
 window = tb.Window(themename="flatly")
 
 # Global
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-window_width = int(screen_width/1.5)
-window_height = int (screen_height/1.5)
-x = (screen_width/2) - (window_width/2)
-y = (screen_height/2) - (window_height/2)
+# screen_width = window.winfo_screenwidth()
+# screen_height = window.winfo_screenheight()
+window_width = int(1280)
+window_height = int (720)
+# y = (screen_height/2) - (window_height/2)
 
 # Window properties
 window.title("Admin Dashboard")
-window.geometry(f"{window_width}x{window_height}+{int(x)}+{int(y)}")
+# window.geometry(f"{window_width}x{window_height}+{int(x)}+{int(y)}")
+window.geometry(f"{window_width}x{window_height}")
+
 window.resizable(False, False)
 
 # Main Frame
