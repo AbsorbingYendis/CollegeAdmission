@@ -7,6 +7,7 @@ import sqlite3
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
+import subprocess
 
 
 # Global variables for verification code and registered email
@@ -62,12 +63,14 @@ def register_action():
     global registered_email
     registered_email = entry_email.get()
     messagebox.showinfo("Register", f"Registration in progress")
+    
 
 # Main application window
 app = tk.Tk()
 app.title("NSU Admin Login")
 app.state('zoomed')
 app.configure(bg="#b04c4c")
+app.attributes('-topmost', True)
 
 # Create a frame
 frame = tk.LabelFrame(app, bg="#e0f7fa", width=550, height=550)
@@ -131,7 +134,8 @@ label_forgot_password.bind("<Button-1>", show_forgot_password_info)
 
 # Functionality for back home link
 def show_back_home_info(event):
-    messagebox.showinfo("Back Home", "Going back to Home not implemented.")
+    app.destroy()
+    subprocess.Popen(["python", "login.py"])
 
 label_back_home.bind("<Button-1>", show_back_home_info)
 

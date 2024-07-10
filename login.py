@@ -18,6 +18,7 @@ window_height = int (600)
 window.title("NSU Admission Login")
 window.geometry(f"{window_width}x{window_height}")
 window.resizable(False, False)
+window.attributes('-topmost', True)
 
 # Main Frame
 main_frame = tb.Frame(window, bootstyle="light")

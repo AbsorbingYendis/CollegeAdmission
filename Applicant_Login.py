@@ -9,6 +9,7 @@ import subprocess
 verification_code = None
 registered_email = None
 
+
 # Function for login button
 def login_action():
     global verification_code
@@ -17,12 +18,12 @@ def login_action():
     entered_code = entry_verification_code.get()
 
     # Connect to the database
-    conn = sqlite3.connect('accounts/ApplicantAcc.db')
+    conn = sqlite3.connect('Database/CAS.db')
     cursor = conn.cursor()
 
     # Query the database for the entered email and password
     cursor.execute('''
-    SELECT * FROM users WHERE email = ? AND password = ?
+    SELECT * FROM User_Account WHERE username = ? AND password = ?
     ''', (entered_email, entered_password))
 
     user = cursor.fetchone()
@@ -31,7 +32,7 @@ def login_action():
     if user:
         if entered_code == verification_code:
             app.destroy()
-            subprocess.Popen(["python", "user_dashboard.py"])
+            subprocess.Popen(["python", "user_dashboard.py", f"{user[0]}"])
         else:
             messagebox.showerror("Login Failed", "Invalid verification code.")
     else:
@@ -39,6 +40,10 @@ def login_action():
 
     # Close the connection
     conn.close()
+
+def register_action():
+    app.destroy()
+    subprocess.Popen(["python", "register.py"])
 
 
 # Function for generating verification code with symbols
@@ -52,16 +57,12 @@ def generate_code():
     verification_code = ''.join(code_digits)  # Store only digits for verification
     messagebox.showinfo("Verification Code", f"Generated code: {combined_code}")
 
-def register_action():
-    global registered_email
-    registered_email = entry_email.get()
-    messagebox.showinfo("Register", f"Registration in progress")
-
 # Main application window
 app = tk.Tk()
 app.title("NSU Student Login")
 app.state('zoomed')
 app.configure(bg="#b04c4c")
+
 
 # Create a frame
 frame = tk.LabelFrame(app, bg="#e0f7fa", width=550, height=550)
@@ -76,7 +77,7 @@ label_title.pack(pady=(20, 20))
 email_frame = tk.Frame(frame, bg="#e0f7fa")
 email_frame.pack(pady=(45,20))
 
-label_email = tk.Label(email_frame, text="Email or Username:", font=("Arial", 12), bg="#e0f7fa",)
+label_email = tk.Label(email_frame, text="Username:", font=("Arial", 12), bg="#e0f7fa",)
 label_email.pack(side="left",pady=(5, 5))
 
 entry_email = tk.Entry(email_frame, font=("Arial", 12), width=30)
@@ -127,7 +128,8 @@ label_forgot_password.bind("<Button-1>", show_forgot_password_info)
 
 # Functionality for back home link
 def show_back_home_info(event):
-    messagebox.showinfo("Back Home", "Going back to Home not implemented.")
+    app.destroy()
+    subprocess.Popen(["python", "login.py"])
 
 label_back_home.bind("<Button-1>", show_back_home_info)
 

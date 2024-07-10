@@ -8,7 +8,7 @@ from user_dashboard_forms.application_form import *
 from user_dashboard_forms.home import *
 from user_dashboard_forms.profile import *
 from user_dashboard_forms.application_form import *
-
+import sys
 
 
 # Window
@@ -28,6 +28,8 @@ window.title("User Dashboard")
 window.geometry(f"{window_width}x{window_height}")
 
 window.resizable(False, False)
+window.attributes('-topmost', True)
+
 
 # Main Frame
 main_frame = tb.Frame(window, bootstyle="default")
@@ -89,7 +91,9 @@ style_home_option.configure('default.TButton', font=("Arial", 13))
 home_option = tb.Button(left_bar,text="Home",width=20, bootstyle="default", style="default.TButton", command=lambda: home(content_frame))
 home_option.pack(pady=(10,0))
 
-application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=lambda: application_form(content_frame))
+application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=lambda: application_form(content_frame, sys.argv[1]))
+# application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=lambda: application_form(content_frame, "1"))
+
 application_option.pack()
 
 # Content

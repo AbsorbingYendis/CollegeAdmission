@@ -27,6 +27,8 @@ window.title("Admin Dashboard")
 window.geometry(f"{window_width}x{window_height}")
 
 window.resizable(False, False)
+window.attributes('-topmost', True)
+
 
 # Main Frame
 main_frame = tb.Frame(window, bootstyle="default")
