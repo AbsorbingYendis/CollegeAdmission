@@ -44,7 +44,8 @@ def forgot_password():
 # Function to go back home
 def back_home():
     # Logic for back home (e.g., navigate to home screen)
-    messagebox.showinfo("Back Home", "Navigating to home screen")
+    root.destroy()
+    subprocess.Popen(["python", "Applicant_Login.py"])
 
 # Create the main window
 root = tk.Tk()
