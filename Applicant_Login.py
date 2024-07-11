@@ -88,7 +88,7 @@ pass_frame = tk.Frame(frame, bg="#e0f7fa")
 pass_frame.pack(pady=1)
 
 label_password = tk.Label(pass_frame, text="Password:", font=("Arial", 12), bg="#e0f7fa")
-label_password.pack(side="left",pady=(5, 5),padx=(60,1))
+label_password.pack(side="left",pady=(5, 5),padx=(0,1))
 
 entry_password = tk.Entry(pass_frame, show='*', font=("Arial", 12), width=30)
 entry_password.pack(side="right",padx=(5,1))
