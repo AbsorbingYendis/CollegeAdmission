@@ -2,11 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import string
-import subprocess
 import sqlite3
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from PIL import Image, ImageTk
 import subprocess
 
 
@@ -22,12 +18,12 @@ def login_action():
     entered_code = entry_verification_code.get()
 
     # Connect to the database
-    conn = sqlite3.connect('accounts/AdminAcc.db')
+    conn = sqlite3.connect('Database/CAS.db')
     cursor = conn.cursor()
 
     # Query the database for the entered email and password
     cursor.execute('''
-    SELECT * FROM users WHERE email = ? AND password = ?
+    SELECT * FROM Admin_Account WHERE username = ? AND password = ?
     ''', (entered_email, entered_password))
 
     user = cursor.fetchone()
@@ -36,7 +32,7 @@ def login_action():
     if user:
         if entered_code == verification_code:
             app.destroy()
-            subprocess.Popen(["python", "admin_dashboard.py"])
+            subprocess.Popen(["python", "admin_dashboard.py", f"{user[0]}"])
 
 
         else:
@@ -85,10 +81,10 @@ label_title.pack(pady=(20, 20))
 email_frame = tk.Frame(frame, bg="#e0f7fa")
 email_frame.pack(pady=(45,20))
 
-label_email = tk.Label(email_frame, text="Email or Username:", font=("Arial", 12), bg="#e0f7fa")
+label_email = tk.Label(email_frame, text="Username:", font=("Arial", 12), bg="#e0f7fa")
 label_email.pack(side="left",pady=(5, 5))
 
-entry_email = tk.Entry(email_frame, font=("Arial", 12), width=40)
+entry_email = tk.Entry(email_frame, font=("Arial", 12), width=30)
 entry_email.pack(side="right",padx=(5,5))
 
 # Frame for pass entry & label
@@ -96,10 +92,10 @@ pass_frame = tk.Frame(frame, bg="#e0f7fa")
 pass_frame.pack(pady=1)
 
 label_password = tk.Label(pass_frame, text="Password:", font=("Arial", 12), bg="#e0f7fa")
-label_password.pack(side="left",pady=(5, 5),padx=(60,1))
+label_password.pack(side="left",pady=(5, 5),padx=(5,1))
 
-entry_password = tk.Entry(pass_frame, show='*', font=("Arial", 12), width=40)
-entry_password.pack(side="right",padx=(5,1))
+entry_password = tk.Entry(pass_frame, show='*', font=("Arial", 12), width=30)
+entry_password.pack(side="right",padx=(5,5))
 
 # Verification code section
 label_verification_code = tk.Label(frame, text="Verification Code:", font=("Arial", 12), bg="#e0f7fa")

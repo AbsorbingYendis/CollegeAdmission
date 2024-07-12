@@ -15,14 +15,109 @@ guardian_info_state = 1
 economic_status_state = 1
 school_state = 1
 grades_state = 1
+course_preference_state = 1
+coursechoice1 = ""
+coursechoice2 = ""
+coursechoice3 = ""
+
+def destroy_content_frame(content_frame):
+  # remove all widgets in content_frame
+  for widget in content_frame.winfo_children():
+        widget.destroy()
+def datacheck(accountID):
+
+  global user_info_state
+  global guardian_info_state
+  global economic_status_state
+  global school_state
+  global grades_state
+  global course_preference_state
+
+  conn = sqlite3.connect("Database/CAS.db")
+  cursor = conn.cursor()
+
+  cursor.execute(f'''select infoID from User_Info where accountID = {accountID}''')
+
+  user_info = cursor.fetchone()
+
+  cursor.execute(f'''select * from Guardian_Info where infoID = {accountID}''')
+  guardian = cursor.fetchall() 
+  
+
+ 
+
+
+
+
+  if len(user_info) != 0 or user_info == None:
+    user_info_state = 2
+  if len(guardian) != 0 or guardian == None:
+    guardian_info_state = 2
+
+def application_submit(accountID,content_frame):
+  if user_info_state == 2 and guardian_info_state == 2 and economic_status_state == 2 and school_state == 2 and grades_state == 2:
+
+
+    # Connect to the database
+    conn = sqlite3.connect('Database/CAS.db')
+    cursor = conn.cursor()
+    cursor.execute(f'''select * from User_Info where infoID = {accountID[0]}''')
+    newaccID = cursor.fetchone()
+    # Query the database for the entered email and password
+    cursor.execute('''
+SELECT
+    User_Info.infoID,
+    User_Info.accountID,
+    Economic_Status.economicID,
+    Grades.gradeID,
+    Guardian_Info.guardianID,
+    School.schoolID,
+    courseOption.courseOptionID
+FROM
+    User_Info
+    INNER JOIN Economic_Status ON User_Info.infoID = Economic_Status.infoID
+    INNER JOIN School ON User_Info.infoID = School.infoID
+    INNER JOIN Guardian_Info ON Guardian_Info.infoID = User_Info.infoID
+    INNER JOIN Grades ON User_Info.accountID = Grades.accountID
+    inner join courseOption on courseOption.infoID = User_Info.infoID
+WHERE
+    User_Info.accountID = ?
+''',(newaccID[1],)
+)
+    user = cursor.fetchone()
+    cursor.execute(f'''insert into Application_Form (
+      infoID,
+      accountID,
+      economicID,
+      gradeID,
+      guardianID,
+      schoolID,
+      courseOptionID,
+      status,
+      dateSubmitted
+      )
+      values ({user[0]},{user[1]},{user[2]},{user[3]},{user[4]},{user[5]},{user[6]},1,"07/12/2024")''')
+
+    conn.commit()
+    conn.close()
+
+
+    messagebox.showinfo("Successful","Application form submitted!")
+    # remove all widgets in content_frame
+    for widget in content_frame.winfo_children():
+          widget.destroy()
+
+
+  else:
+    messagebox.showinfo("Unsuccessful","Application form is not submitted")
 
 
 def destroy_final_form(finalize_frame,):
     for widget in finalize_frame.winfo_children():
       widget.destroy()
 
-def generate_final_frame():
-    form_labels = [("Personal and Contact Information",user_info_state), ("Guardian Information",guardian_info_state), ("Economic Status Information",economic_status_state), ("School Information", school_state), ("Grade Information",grades_state)]
+def generate_final_frame(content_frame):
+    form_labels = [("Personal and Contact Information",user_info_state), ("Guardian Information",guardian_info_state), ("Economic Status Information",economic_status_state), ("School Information", school_state), ("Grade Information",grades_state),("Course Information",course_preference_state)]
     form_labels[0]
 
     num = 0
@@ -46,10 +141,10 @@ def generate_final_frame():
       num = num + 1
 
     # num = num + 1
-    finalize_button = tb.Button(finalize_frame, text="Finalize Application", bootstyle="danger")
+    finalize_button = tb.Button(finalize_frame, text="Finalize Application", bootstyle="danger", command=lambda: application_submit(infoID,content_frame))
     finalize_button.pack(pady=20)
 
-def user_state(accountID):
+def user_state(accountID,content_frame):
   global user_info_state
   if user_info_state == 1:
     insert_user_info(accountID)
@@ -59,11 +154,14 @@ def user_state(accountID):
   else:
     pass
   destroy_final_form(finalize_frame)
-  generate_final_frame()
+  generate_final_frame(content_frame)
   
   
-def guardian_state():
+def guardian_state(content_frame):
   global guardian_info_state
+  if user_info_state == 1:
+    messagebox.showinfo("Prohibited!", "Submit personal and contact information first!")
+
   if guardian_info_state == 1 and user_info_state == 2:
     insert_guardian_info()
     guardian_info_state = 2
@@ -73,10 +171,12 @@ def guardian_state():
     pass
 
   destroy_final_form(finalize_frame)
-  generate_final_frame()
+  generate_final_frame(content_frame)
 
-def economic_state():
+def economic_state(content_frame):
   global economic_status_state
+  if user_info_state == 1:
+    messagebox.showinfo("Prohibited!", "Submit personal and contact information first!")
   if economic_status_state == 1 and user_info_state == 2:
     insert_economic_info()
     economic_status_state = 2
@@ -86,10 +186,12 @@ def economic_state():
     pass
 
   destroy_final_form(finalize_frame)
-  generate_final_frame()
+  generate_final_frame(content_frame)
 
-def school_state_function():
+def school_state_function(content_frame):
   global school_state
+  if user_info_state == 1:
+    messagebox.showinfo("Prohibited!", "Submit personal and contact information first!")
   if school_state == 1 and user_info_state == 2:
     insert_school_info()
     school_state = 2
@@ -99,10 +201,11 @@ def school_state_function():
     pass
 
   destroy_final_form(finalize_frame)
-  generate_final_frame()
+  generate_final_frame(content_frame)
 
-def grades_state_function(accountID):
+def grades_state_function(accountID,content_frame):
   global grades_state
+  
   if grades_state == 1:
     insert_grades_info(accountID)
     grades_state = 2
@@ -112,9 +215,19 @@ def grades_state_function(accountID):
     pass
 
   destroy_final_form(finalize_frame)
-  generate_final_frame()
+  generate_final_frame(content_frame)
 
-    
+def preference_state(infoID):
+  global course_preference_state
+
+  if course_preference_state == 1:
+    insert_course_info(infoID)
+    course_preference_state = 2
+  elif course_preference_state == 2:
+    pass
+  else:
+    pass
+
 def submit_form(content_frame, accountID):
 
   # Collect data from the form
@@ -140,7 +253,7 @@ def submit_form(content_frame, accountID):
 
   # Show success message
   tk.messagebox.showinfo("Success", "Form submitted successfully!")
-  
+
 def insert_user_info(accountID):
 
   first_name = first_name_entry.get()
@@ -164,6 +277,7 @@ def insert_user_info(accountID):
   city = city_entry.get()
   barangay = barangay_entry.get()
   area = area_entry.get()
+  sex = sex_var.get()
 
 
   conn = sqlite3.connect('Database/CAS.db')
@@ -199,7 +313,7 @@ def insert_user_info(accountID):
     ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
     
 );
-    """, (int(accountID),first_name, surname, middle_name, suffix,img_data,email, "Male", civilstatus, place_of_birth,bday, disability, ethnicity, mother_tongue, religion, height, area, weight, "Text", city, barangay, region, landline, mobile_no )
+    """, (int(accountID),first_name, surname, middle_name, suffix,img_data,email, sex, civilstatus, place_of_birth,bday, disability, ethnicity, mother_tongue, religion, height, area, weight, "Text", city, barangay, region, landline, mobile_no )
                  )
   conn.commit()
   cursor.execute(f"""SELECT infoID from User_Info where accountID = {int(accountID)}
@@ -209,8 +323,21 @@ def insert_user_info(accountID):
   global infoID
   infoID = cursor.fetchone()
   conn.close()
+  
+  messagebox.showinfo("Successful", "Submitted user info successfully")
 
-  tk.messagebox.showinfo("Successful", "Submitted user info successfully")
+def insert_course_info(userInfo):
+  conn = sqlite3.connect('Database/CAS.db')
+  cursor = conn.cursor()
+  cursor.execute(f'''select * from User_Info where accountID = {userInfo}''')
+  newaccID = cursor.fetchone()
+  
+  cursor.execute(f'''insert into courseOption(infoID,firstChoice,secondChoice,thirdChoice)
+Values(?,?,?,?)''',((newaccID[0]),coursechoice1,coursechoice2,coursechoice3))
+  conn.commit()
+  conn.close()
+  messagebox.showinfo("Success","Courses submitted")
+
 
 def insert_guardian_info():
 
@@ -231,6 +358,8 @@ INSERT INTO Guardian_Info (
 
   conn.commit()
   conn.close()
+
+  messagebox.showinfo("Successful", "Submitted guardian info successfully")
 
 def insert_economic_info():
 
@@ -282,7 +411,7 @@ def insert_school_info():
   conn.commit()
   conn.close()
 
-  messagebox.showinfo("Success", "School successfully submitted")
+  # messagebox.showinfo("Success", "School successfully submitted")
   
 def insert_grades_info(accountID):
 
@@ -309,8 +438,13 @@ def insert_grades_info(accountID):
   messagebox.showinfo("Success", "Grades successfully submitted")
 
 def application_form(content_frame, infoID):
-
+  if user_info_state == 2 and guardian_info_state == 2 and economic_status_state == 2 and school_state == 2 and grades_state == 2:
+    # remove all widgets in content_frame
+    for widget in content_frame.winfo_children():
+          widget.destroy()
+          
   global first_name_entry, middle_name_entry, surname_entry, suffix_entry, bday_entry, email_entry, sex_var, civilstatus_entry, pob_entry, disability_entry, ethnicity_entry, mt_entry, religion_entry, height_entry, weight_entry, landline_entry, mobileno_entry, country_entry, region_entry, city_entry, barangay_entry, area_entry, cp_name_entry, cp_contact_entry, cp_address_entry, lastschool_entry, school_address_entry, yog_entry, school_type_entry, firstsem_entry, secondsem_entry, school_id_entry, income_source_entry, annual_income_entry
+
 
   def upload_image():
     global img_data, pdf_data
@@ -323,7 +457,7 @@ def application_form(content_frame, infoID):
     image = Image.open(file_path)
 
     # Resize image to fit within the specified dimensions
-    image.thumbnail((200, 200))
+    image.thumbnail((100, 100))
 
     # Display the image in the GUI
     img_display = ImageTk.PhotoImage(image)
@@ -416,6 +550,7 @@ def application_form(content_frame, infoID):
   sex_mb.grid(row=5, column=1, padx=5, pady=5,sticky='w')
 
   sex_menu = tb.Menu(sex_mb)
+  global sex_var
   sex_var = tk.StringVar()
   sex_menu.add_radiobutton(label="Male", variable=sex_var)
   sex_menu.add_radiobutton(label="Female", variable=sex_var)
@@ -524,7 +659,7 @@ def application_form(content_frame, infoID):
   area_entry.grid(row=5, column=1,columnspan=2, padx=5, pady=5, sticky='ew')
 
   # Row 7 
-  submit_personal_contact_info = tb.Button(contact_info_frame, text="Submit contact and personal information", bootstyle="danger",command=lambda: user_state(infoID))
+  submit_personal_contact_info = tb.Button(contact_info_frame, text="Submit contact and personal information", bootstyle="danger",command=lambda: user_state(infoID,content_frame))
   submit_personal_contact_info.grid(row=6, columnspan=4, sticky="ew", padx=300, pady=100)
   
 
@@ -554,7 +689,7 @@ def application_form(content_frame, infoID):
   cp_address_entry.grid(row=2, column=1, padx=5, pady=5, sticky='ew')
 
   # Row 4
-  submit_guardian_info_button = tb.Button(guardian_info_frame, text="Submit Guardian Info", bootstyle="danger",command=lambda: guardian_state() )
+  submit_guardian_info_button = tb.Button(guardian_info_frame, text="Submit Guardian Info", bootstyle="danger",command=lambda: guardian_state(content_frame) )
   submit_guardian_info_button.grid(row=3, columnspan=4, sticky="ew", padx=300, pady=10)
 
   # Row 5
@@ -574,7 +709,7 @@ def application_form(content_frame, infoID):
   annual_income_entry.grid(row=7, column=1, padx=5, pady=5, sticky='ew')
 
   # Row 9
-  submit_guardian_info_button = tb.Button(guardian_info_frame, text="Submit Economic Status", bootstyle="danger", command=lambda: economic_state())
+  submit_guardian_info_button = tb.Button(guardian_info_frame, text="Submit Economic Status", bootstyle="danger", command=lambda: economic_state(content_frame))
   submit_guardian_info_button.grid(row=8, columnspan=4, sticky="ew", padx=300, pady=10)
 
 
@@ -610,7 +745,7 @@ def application_form(content_frame, infoID):
   school_address_entry.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky='ew')
 
   # Row 4
-  submit_school_button = tb.Button(school_grad_frame, text="Submit School", bootstyle="danger", command=lambda: school_state_function())
+  submit_school_button = tb.Button(school_grad_frame, text="Submit School", bootstyle="danger", command=lambda: school_state_function(content_frame))
   submit_school_button.grid(row=3, columnspan=4, sticky="ew", padx=300, pady=10)
   
   
@@ -643,12 +778,129 @@ def application_form(content_frame, infoID):
   secondsem_entry.grid(row=2, column=3, padx=5, pady=5, sticky='ew')
 
   # Row 4
-  submit_button1 = tb.Button(grades_frame, text="Submit", bootstyle="danger", command=lambda: grades_state_function(infoID))
+  submit_button1 = tb.Button(grades_frame, text="Submit", bootstyle="danger", command=lambda: grades_state_function(infoID,content_frame))
   submit_button1.grid(row=3, columnspan=4, sticky="ew", padx=300, pady=100)
 
   
 
+  # Course Preference
+  course_frame = tb.Frame(content_frame, bootstyle="light")
+  course_frame.pack(fill="both", expand=True)
   
+  # Heading
+  # tb.Label(course_frame, text="Academic Program Preference", bootstyle="light-inverse", font=("Arial", 20, "bold")).grid(row=0, column=0, padx=5, pady=(10,10), sticky='ew')
+  tb.Label(course_frame, text="Course Preference", bootstyle="light-inverse", font=("Arial", 20, "bold")).pack(side=TOP,padx=5, pady=(10,10))
+
+  # Choices frame
+  choices_frame = tb.Frame(course_frame, bootstyle="light")
+  choices_frame.pack(fill="both", expand=True)
+  # choices_frame.grid_columnconfigure(1, weight=1)
+  
+  # Query the courses
+  conn = sqlite3.connect("Database/CAS.db")
+  cursor = conn.cursor()
+  
+  cursor.execute("SELECT courseName FROM Course")
+  rows = cursor.fetchall()
+
+  conn.commit()
+  conn.close()
+
+  # FIRST CHOICE
+  # Choices rows
+  row_frame = tb.Frame(choices_frame, bootstyle="light")
+  row_frame.pack(pady=10)
+
+  # Prompt
+  tb.Label(row_frame, text="First Choice: ", bootstyle="light-inverse", font=("Arial", 12, "bold")).grid(row=0, column=0, padx=5,pady=5, sticky='w')
+
+  # Menu Button
+  course_mb = tb.Menubutton(row_frame, bootstyle="default", text="Select Course")
+  course_mb.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+  course_menu = tb.Menu(course_mb)
+  global course_var_first
+  course_var_first = tk.StringVar()
+
+
+  for row in rows:
+    course_menu.add_radiobutton(label=f"{row[0]}", variable=course_var_first, command=lambda course=row[0]: update_course_label1(course))
+
+  course_mb['menu'] = course_menu
+
+  # Course selected label
+  course_label1 = tb.Label(row_frame, text="(No course selected)", bootstyle="info", font=("Arial", 15,"bold"), width=50, anchor="center")
+  course_label1.grid(row=0, column=2, padx=10,pady=5, sticky='ew')
+
+  # SECOND CHOICE
+  # Choices rows
+  row_frame = tb.Frame(choices_frame, bootstyle="light")
+  row_frame.pack(pady=10)
+
+  # Prompt
+  tb.Label(row_frame, text="Second Choice: ", bootstyle="light-inverse", font=("Arial", 12, "bold")).grid(row=1, column=0, padx=5,pady=5, sticky='w')
+
+  # Menu Button
+  course_mb = tb.Menubutton(row_frame, bootstyle="default", text="Select Course")
+  course_mb.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+  course_menu = tb.Menu(course_mb)
+  global course_var_second
+  course_var_second = tk.StringVar()
+
+
+  for row in rows:
+    course_menu.add_radiobutton(label=f"{row[0]}", variable=course_var_second, command=lambda course=row[0]: update_course_label2(course))
+
+  course_mb['menu'] = course_menu
+
+  # Course selected label
+  course_label2 = tb.Label(row_frame, text="(No course selected)", bootstyle="info", font=("Arial", 15,"bold"), width=50, anchor="center")
+  course_label2.grid(row=1, column=2, padx=10,pady=5, sticky='ew')
+
+  # THIRD CHOICE
+  # Choices rows
+  row_frame = tb.Frame(choices_frame, bootstyle="light")
+  row_frame.pack(pady=10)
+
+  # Prompt
+  tb.Label(row_frame, text="Third Choice: ", bootstyle="light-inverse", font=("Arial", 12, "bold")).grid(row=2, column=0, padx=5,pady=5, sticky='w')
+
+  # Menu Button
+  course_mb = tb.Menubutton(row_frame, bootstyle="default", text="Select Course")
+  course_mb.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+  course_menu = tb.Menu(course_mb)
+  global course_var_third
+  course_var_third = tk.StringVar()
+
+
+  for row in rows:
+    course_menu.add_radiobutton(label=f"{row[0]}", variable=course_var_third, command=lambda course=row[0]: update_course_label3(course))
+
+  course_mb['menu'] = course_menu
+
+  # Course selected label
+  course_label3 = tb.Label(row_frame, text="(No course selected)", bootstyle="info", font=("Arial", 15,"bold"), width=50, anchor="center")
+  course_label3.grid(row=2, column=2, padx=10,pady=5, sticky='ew')
+  
+
+  def update_course_label1(courseName):
+    course_label1.config(text=courseName)
+    global coursechoice1
+    coursechoice1 = courseName
+  def update_course_label2(courseName):
+    course_label2.config(text=courseName)
+    global coursechoice2
+    coursechoice2 = courseName
+  def update_course_label3(courseName):
+    course_label3.config(text=courseName)
+    global coursechoice3
+    coursechoice3 = courseName
+
+  # Submit Course Button
+  button_submit_course = tb.Button(choices_frame, text="Submit Choices", bootstyle="danger", command=lambda: preference_state(infoID))
+  button_submit_course.pack(side=TOP, pady=(15,0))
 
     
   # FINALIZE FORM
@@ -658,7 +910,7 @@ def application_form(content_frame, infoID):
   finalize_frame.grid_columnconfigure(1, weight=1)
   finalize_frame.grid_columnconfigure(3, weight=1)
 
-  generate_final_frame()
+  generate_final_frame(content_frame)
 
   
   
@@ -672,4 +924,5 @@ def application_form(content_frame, infoID):
   app_form_notebook.add(guardian_info_frame, text="Guardian Information and Economic Status")
   app_form_notebook.add(school_grad_frame, text="Last School Attended")
   app_form_notebook.add(grades_frame, text="Grades (Grade 11)")
+  app_form_notebook.add(course_frame, text="Course Preference")
   app_form_notebook.add(finalize_frame, text="Finalize Application")

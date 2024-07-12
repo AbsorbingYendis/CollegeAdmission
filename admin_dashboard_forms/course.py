@@ -4,18 +4,20 @@ from ttkbootstrap.constants import *
 import sqlite3
 from tkinter import messagebox
 
+
+
 # Function to fetch data from SQLite database
 def load_data(search_query=""):
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("Database/CAS.db")
     cursor = conn.cursor()
 
-    # Create table if it does not exist
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            CourseId INTEGER PRIMARY KEY AUTOINCREMENT,
-            CourseName TEXT NOT NULL
-        )
-    """)
+    # # Create table if it does not exist
+    # cursor.execute("""
+    #     CREATE TABLE IF NOT EXISTS students (
+    #         CourseId INTEGER PRIMARY KEY AUTOINCREMENT,
+    #         CourseName TEXT NOT NULL
+    #     )
+    # """)
     conn.commit()
 
     # Clear the current contents of the tree
@@ -24,9 +26,9 @@ def load_data(search_query=""):
 
     # Modify query based on search_query
     if search_query:
-        cursor.execute("SELECT * FROM students WHERE CourseName LIKE ?", (search_query + '%',))
+        cursor.execute("SELECT * FROM Course WHERE courseName LIKE ?", (search_query + '%',))
     else:
-        cursor.execute("SELECT * FROM students")
+        cursor.execute("SELECT * FROM Course")
 
     rows = cursor.fetchall()
 
@@ -45,6 +47,8 @@ def edit_entry(content_frame):
 
         edit_window = tk.Toplevel(content_frame)
         edit_window.title("Edit Entry")
+        edit_window.attributes('-topmost', True)
+
 
         tk.Label(edit_window, text="Course Name:").grid(row=0, column=0, padx=10, pady=5)
         entry_course = tk.Entry(edit_window)
@@ -90,28 +94,34 @@ def delete_entry():
 
 def add_entry(manage_course):
     add_window = tk.Toplevel(manage_course)
-    add_window.title("Add Entry")
+    add_window.title("Add Course")
+    add_window.attributes('-topmost', True)
 
     # Window layout
     tk.Label(add_window, text="Course Name:").grid(row=0, column=0, padx=10, pady=5)
     entry_course = tk.Entry(add_window)
     entry_course.grid(row=0, column=1, padx=10, pady=5)
 
+    tk.Label(add_window, text="Number of slots:").grid(row=1, column=0, padx=10, pady=5)
+    entry_slots = tk.Entry(add_window)
+    entry_slots.grid(row=1, column=1, padx=10, pady=5)
+
     def create_entry():
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("Database/CAS.db")
         cursor = conn.cursor()
         entry = entry_course.get()
+        numOfSlots = entry_slots.get()
         if not entry.strip():
             messagebox.showwarning("Input Error", "Course Name cannot be empty.")
             return
-        query = "INSERT INTO students(CourseName) values (?)"
-        cursor.execute(query, (entry,))
+        query = "INSERT INTO Course(CourseName,numberOfSlots,adminID,admittedApplicants) values (?,?,?,?)"
+        cursor.execute(query, (entry,numOfSlots,1,0))
         conn.commit()
         conn.close()
         load_data(search_var.get())  # Refresh Treeview after update
         add_window.destroy()
 
-    tk.Button(add_window, text="Save", command=create_entry).grid(row=1, column=0, columnspan=2, pady=10)
+    tk.Button(add_window, text="Save", command=create_entry).grid(row=2, column=0, columnspan=2, pady=10)
 
     center_window(add_window)  # Center the add window
 
@@ -139,17 +149,12 @@ def course(content_frame):
   for widget in content_frame.winfo_children():
         widget.destroy()
 
-  label = tb.Label(content_frame, text="This is course frame")
-  label.pack()
-
   # Create notebook
-  nb = tb.Notebook(content_frame, bootstyle="primary")
-  nb.pack(fill=BOTH, expand=1)
+  frame = tb.Notebook(content_frame, bootstyle="primary")
+  frame.pack(fill=BOTH, expand=1, pady=20, padx=20)
 
   # Create frames for notebook
-  add_course = tb.Frame(content_frame, bootstyle="light")
-  add_course.pack(fill="both", expand=True)
-  manage_course = tb.Frame(content_frame, bootstyle="light")
+  manage_course = tb.Frame(frame, bootstyle="default")
   manage_course.pack(fill="both", expand=True)
 
   # Manage Course tab
@@ -179,16 +184,24 @@ def course(content_frame):
 
   # Create a Treeview widget
   global tree
-  tree = tb.Treeview(manage_course, columns=("Course ID", "Course Name"), show='headings')
+  tree = tb.Treeview(manage_course, columns=("Course ID", "Course Name", "Number of Slots", "Admitted Applicants"), show='headings')
   tree.pack(fill=tk.BOTH, expand=True)
 
   # Define headings
   tree.heading("Course ID", text="Course ID")
   tree.heading("Course Name", text="Course Name")
+  tree.heading("Number of Slots", text="Number of Slots")
+  tree.heading("Admitted Applicants", text="Admitted Applicants")
+
+
 
   # Adjust column widths
   tree.column("Course ID", width=100, anchor="center")
   tree.column("Course Name", width=300, anchor="center")
+  tree.column("Number of Slots", width=300, anchor="center")
+  tree.column("Admitted Applicants", width=300, anchor="center")
+
+
 
   # Load initial data from SQLite database
   load_data()
@@ -203,6 +216,6 @@ def course(content_frame):
 
 
   # Add frames to notebook
-  nb.add(add_course, text="Add course")
-  nb.add(manage_course, text="Manage course")
+#   frame.add(add_course, text="Add course")
+#   frame.add(manage_course, text="Manage course")
   

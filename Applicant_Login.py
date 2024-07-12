@@ -43,7 +43,7 @@ def login_action():
 
 def register_action():
     app.destroy()
-    subprocess.Popen(["python", "register.py"])
+    subprocess.Popen(["python", "TermsOfService.py"])
 
 
 # Function for generating verification code with symbols
@@ -62,6 +62,7 @@ app = tk.Tk()
 app.title("NSU Student Login")
 app.state('zoomed')
 app.configure(bg="#b04c4c")
+app.attributes('-topmost', True)
 
 
 # Create a frame

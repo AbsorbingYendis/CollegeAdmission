@@ -1,2 +1,2 @@
-
-window_height = int (600)
+Window(themename="flatly")
+window_width

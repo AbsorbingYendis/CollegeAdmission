@@ -9,7 +9,25 @@ from user_dashboard_forms.home import *
 from user_dashboard_forms.profile import *
 from user_dashboard_forms.application_form import *
 import sys
+import sqlite3
+import subprocess
 
+def logout():
+  window.destroy()
+  subprocess.Popen(["python", "Applicant_Login.py"])
+
+# Get the row of the current user account logged in
+conn = sqlite3.connect('Database/CAS.db')
+cursor = conn.cursor()
+
+cursor.execute('''
+               SELECT * FROM User_Account
+               WHERE accountId = ?''', (sys.argv[1],))
+account = cursor.fetchone()
+account_username = account[2]
+
+conn.commit()
+conn.close()
 
 # Window
 window = tb.Window(themename="flatly")
@@ -61,13 +79,13 @@ sep.pack(fill=tb.Y, side=LEFT)
 profile_frame = tb.Frame(top_bar, bootstyle="info")
 profile_frame.pack(side=RIGHT)
 profile_frame.pack_propagate(False)
-profile_frame.config(width=300, height=50)
+profile_frame.config(width=500, height=50)
 
 
-user_name_label = tb.Label(profile_frame, text="(Applicant Full Name)", bootstyle="inverse-info", font=("Arial",10,"bold"), width=25)
+user_name_label = tb.Label(profile_frame, text=f"({account_username})", bootstyle="inverse-info", font=("Arial",10,"bold"), width=25)
 user_name_label.pack(padx=10, side=LEFT) 
 
-profile_button = tb.Button(profile_frame, text="Profile", bootstyle="warning", command=lambda: profile(content_frame))
+profile_button = tb.Button(profile_frame, text="Logout", bootstyle="warning", command=lambda: logout())
 profile_button.pack(side=RIGHT, padx=20)
 
 sep1 = tb.Separator(top_bar, orient="vertical")
@@ -88,10 +106,10 @@ style_home_option.configure('default.TButton', font=("Arial", 13))
 
 
 # Left bar menu items
-home_option = tb.Button(left_bar,text="Home",width=20, bootstyle="default", style="default.TButton", command=lambda: home(content_frame))
+home_option = tb.Button(left_bar,text="Home",width=20, bootstyle="default", style="default.TButton", command=lambda: home(content_frame,sys.argv[1]))
 home_option.pack(pady=(10,0))
 
-application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=lambda: application_form(content_frame, sys.argv[1]))
+application_option = tb.Button(left_bar,text="Application Form",width=20, style="defauaclt.TButton", command=lambda: application_form(content_frame, sys.argv[1]))
 # application_option = tb.Button(left_bar,text="Application Form",width=20, style="default.TButton", command=lambda: application_form(content_frame, "1"))
 
 application_option.pack()
@@ -102,8 +120,6 @@ content_frame.pack(side=LEFT)
 content_frame.pack_propagate(False) # Without this, we can't change the frame's size
 content_frame.configure(width=window_width, height=window_height)
 
-label = tk.Label(content_frame, text="Main frame")
-label.pack()
 
 
 

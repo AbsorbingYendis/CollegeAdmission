@@ -8,6 +8,25 @@ from admin_dashboard_forms.home import*
 from admin_dashboard_forms.public_notice import*
 from admin_dashboard_forms.reports import*
 from admin_dashboard_forms.search_application import*
+import sys
+import sqlite3
+
+def logout():
+  window.destroy()
+  subprocess.Popen(["python", "Admin_Login.py"])
+
+# Get the row of the current user account logged in
+conn = sqlite3.connect('Database/CAS.db')
+cursor = conn.cursor()
+
+cursor.execute('''
+               SELECT * FROM Admin_Account
+               WHERE adminId = ?''', (sys.argv[1],))
+admin_account = cursor.fetchone()
+admin_username = admin_account[1]
+
+conn.commit()
+conn.close()
 
 # Functions
 
@@ -59,16 +78,13 @@ sep.pack(fill=tb.Y, side=LEFT)
 profile_frame = tb.Frame(top_bar, bootstyle="info")
 profile_frame.pack(side=RIGHT)
 profile_frame.pack_propagate(False)
-profile_frame.config(width=350, height=50)
+profile_frame.config(width=500, height=50)
 
 
-admin_name_label = tb.Label(profile_frame, text="(Admin Name)", bootstyle="info-inverse", font=("Arial",10,"bold"), width=20)
+admin_name_label = tb.Label(profile_frame, text=f"({admin_username})", bootstyle="info-inverse", font=("Arial",10,"bold"), width=20)
 admin_name_label.pack(padx=10, side=LEFT) 
 
-notification_button = tb.Button(profile_frame, text="Notifications", bootstyle="success")
-notification_button.pack(side=RIGHT, padx=10)
-
-profile_button = tb.Button(profile_frame, text="Profile", bootstyle="warning")
+profile_button = tb.Button(profile_frame, text="Logout", bootstyle="warning", command=lambda: logout())
 profile_button.pack(side=RIGHT)
 
 
@@ -101,14 +117,7 @@ course_option.pack()
 application_option = tb.Button(left_bar,text="Admission Application",width=20, style="default.TButton",command=lambda: admission_application(content_frame))
 application_option.pack()
 
-search_application_option = tb.Button(left_bar,text="Search Application",width=20, style="default.TButton", command=lambda: search_application(content_frame))
-search_application_option.pack()
 
-public_notice_option = tb.Button(left_bar,text="Public Notice",width=20, style="default.TButton", command=lambda: public_notice(content_frame))
-public_notice_option.pack()
-
-reports_option = tb.Button(left_bar,text="Reports",width=20, style="default.TButton", command=lambda: reports(content_frame))
-reports_option.pack()
 
 content_frame = tb.Frame(main_frame, bootstyle="default")
 content_frame.pack(side=LEFT)
